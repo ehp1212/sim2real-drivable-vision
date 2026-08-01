@@ -1,0 +1,99 @@
+# -------------------------
+# Python
+# -------------------------
+.venv/
+venv/
+env/
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# -------------------------
+# IDE / Editor
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# -------------------------
+# OS files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Environment / secrets
+# -------------------------
+.env
+.env.*
+!.env.example
+
+# -------------------------
+# Pretrained and trained models
+# -------------------------
+model/pretrained/*.pt
+model/trained/
+model/deployment/
+
+*.onnx
+*.engine
+*.trt
+*.plan
+
+# -------------------------
+# Isaac Sim SDG outputs
+# -------------------------
+sdg/outputs/
+sdg/cache/
+sdg/logs/
+
+# Isaac / Omniverse generated files
+*.log
+*.tmp
+*.bak
+__pycache__/
+
+# -------------------------
+# Generated datasets
+# -------------------------
+dataset/raw/
+dataset/prepared/
+dataset/cache/
+
+# Large generated image and annotation files
+*.npy
+*.npz
+
+# -------------------------
+# Training outputs
+# -------------------------
+training/outputs/
+training/runs/
+runs/
+
+# TensorBoard
+events.out.tfevents.*
+lightning_logs/
+
+# -------------------------
+# Ultralytics
+# -------------------------
+datasets/
+weights/
+wandb/
+
+# -------------------------
+# Temporary files
+# -------------------------
+tmp/
+temp/
+.cache/
