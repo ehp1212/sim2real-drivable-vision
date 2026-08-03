@@ -8,8 +8,8 @@ ISAAC_PY="${HOME}/isaacsim_4.5.0/bin/python"
 cd "${PROJECT_ROOT}"
 
 CONFIGS=(
-    # "sdg/configs/warehouse.yaml"
-    # "sdg/configs/hospital.yaml"
+    "sdg/configs/warehouse.yaml"
+    "sdg/configs/hospital.yaml"
     "sdg/configs/office.yaml"
 )
 

@@ -2,7 +2,7 @@ launch:
   headless: true
   renderer: RayTracedLighting
 generation:
-  num_frames: 10
+  num_frames: 200
   seed: 142
   output_dir: sdg/outputs/hospital/run_001
   rt_subframes: 8
@@ -183,8 +183,8 @@ randomization:
 
     position:
       min:
-      - 1.0
-      - 1.0
+      - -3.0
+      - -3.0
       - 0.0
       max:
       - 3.0

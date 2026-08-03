@@ -1,0 +1,13 @@
+# YOLO26 semantic segmentation dataset
+path: /home/eun/personal_project/jetson_model/dataset/drivable
+
+train: images/train
+val: images/val
+test: images/test
+
+masks_dir: masks
+
+names:
+  0: background
+  1: drivable
+  2: obstacle

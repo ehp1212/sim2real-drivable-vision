@@ -97,3 +97,11 @@ wandb/
 tmp/
 temp/
 .cache/
+
+# Generated semantic segmentation dataset
+dataset/drivable/images/*/*
+dataset/drivable/masks/*/*
+
+# Keep empty dataset structure
+!dataset/drivable/images/*/.gitkeep
+!dataset/drivable/masks/*/.gitkeep
