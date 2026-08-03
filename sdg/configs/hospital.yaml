@@ -1,0 +1,222 @@
+launch:
+  headless: true
+  renderer: RayTracedLighting
+generation:
+  num_frames: 10
+  seed: 142
+  output_dir: sdg/outputs/hospital/run_001
+  rt_subframes: 8
+environment:
+  url: /Isaac/Environments/Hospital/hospital.usd
+
+  semantic_labels:
+    drivable:
+      paths: []
+
+      keywords:
+        - floor
+        - flooring
+        - ground
+        - corridor_floor
+        - hallway_floor
+        - room_floor
+        - lobby_floor
+        - tile_floor
+        - floor_tile
+        - vinyl_floor
+        - carpet
+
+    obstacle:
+      paths: []
+
+      keywords:
+        # 병원 가구
+        - bed
+        - hospital_bed
+        - chair
+        - stool
+        - bench
+        - table
+        - desk
+        - cabinet
+        - cupboard
+        - shelf
+        - drawer
+        - locker
+        - counter
+        - reception
+
+        # 병원 장비
+        - wheelchair
+        - stretcher
+        - gurney
+        - trolley
+        - cart
+        - monitor
+        - medical
+        - equipment
+        - machine
+        - stand
+        - iv_stand
+        - oxygen
+
+        # 일반 실내 물체
+        - bin
+        - trash
+        - box
+        - crate
+        - bag
+        - plant
+        - planter
+        - sofa
+        - couch
+
+        # 통행 방해 구조
+        - column
+        - pillar
+        - railing
+        - barrier
+        - partition
+        - stairs
+        - stair
+        - step
+camera:
+  resolution:
+  - 640
+  - 384
+  focal_length: 24.0
+  clipping_range:
+  - 0.05
+  - 100.0
+  position:
+    min:
+    - -1.5
+    - -1.5
+    - 0.18
+    max:
+    - 1.5
+    - 1.5
+    - 0.35
+  look_at:
+    min:
+    - -1.0
+    - -1.0
+    - 0.0
+    max:
+    - 1.0
+    - 1.0
+    - 0.25
+randomization:
+  lighting:
+    enabled: false
+    count: 3
+    position:
+      min:
+      - -3.0
+      - -3.0
+      - 2.0
+      max:
+      - 3.0
+      - 3.0
+      - 4.0
+    intensity:
+      min: 1500
+      max: 5000
+    color:
+      min:
+      - 0.7
+      - 0.7
+      - 0.7
+      max:
+      - 1.0
+      - 1.0
+      - 1.0
+    temperature:
+      mean: 5000
+      std: 800
+    scale:
+      min: 0.5
+      max: 1.5
+  obstacles:
+    obstacles: null
+    enabled: true
+    assets:
+    - name: cardboard_box_a
+      url: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01_414.usd
+      count: 1
+
+    - name: cardboard_box_d
+      url: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxD_04_1847.usd
+      count: 1
+
+    - name: medical_box
+      url: /Isaac/Environments/Hospital/Props/SM_MedicalBox_01g.usd
+      count: 1
+
+    - name: wet_floor_sign
+      url: /Isaac/Environments/Simple_Warehouse/Props/S_WetFloorSign.usd
+      count: 1
+
+    - name: briefcase
+      url: /Isaac/Environments/Office/Props/SM_Briefcase.usd
+      count: 1
+
+    - name: medical_bag
+      url: /Isaac/Environments/Hospital/Props/SM_MedicalBag_01a.usd
+      count: 1
+
+    - name: fire_extinguisher
+      url: /Isaac/Environments/Office/Props/SM_Extinguisher.usd
+      count: 1
+
+    - name: closed_book_a
+      url: /Isaac/Environments/Office/Props/SM_Book_03.usd
+      count: 1
+
+    - name: open_book
+      url: /Isaac/Environments/Office/Props/SM_BookOpen_01.usd
+      count: 1
+
+    - name: armchair
+      url: /Isaac/Environments/Office/Props/SM_Armchair.usd
+      count: 1
+
+    position:
+      min:
+      - 1.0
+      - 1.0
+      - 0.0
+      max:
+      - 3.0
+      - 3.0
+      - 0.0
+    rotation:
+      min:
+      - 0.0
+      - 0.0
+      - -180.0
+      max:
+      - 0.0
+      - 0.0
+      - 180.0
+    scale:
+      min:
+      - 0.7
+      - 0.7 
+      - 0.7
+      max:
+      - 1.0
+      - 1.0
+      - 1.0
+    color:
+      min:
+      - 0.1
+      - 0.1
+      - 0.1
+      max:
+      - 0.9
+      - 0.9
+      - 0.9
+writer:
+  rgb: true
+  semantic_segmentation: true

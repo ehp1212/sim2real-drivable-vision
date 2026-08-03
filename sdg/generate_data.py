@@ -85,20 +85,43 @@ def load_environment(environment_url: str) -> None:
     for _ in range(10):
         simulation_app.update()
 
-def print_mesh_prim_paths() -> None:
-    """Print mesh paths to identify floors and fixed obstacles."""
-
+def print_floor_mesh_candidates() -> None:
     stage = get_current_stage()
 
-    print("\n[SDG] Mesh prims in current environment:")
+    print("\n[SDG] Floor Mesh candidates:")
 
     for prim in stage.Traverse():
-        if prim.IsA(UsdGeom.Mesh):
-            print(prim.GetPath())
+        if not prim.IsA(UsdGeom.Mesh):
+            continue
+
+        path = str(prim.GetPath())
+        lower_path = path.lower()
+
+        if any(
+            keyword in lower_path
+            for keyword in (
+                "floor",
+                "ground",
+                "concrete",
+                "carpet",
+            )
+        ):
+            print(f"  - {path}")
 
 def apply_semantic_labels(config: dict) -> None:
     """
-    Apply project semantic classes to existing environment prims.
+    Apply semantic labels to meshes in the loaded environment.
+
+    YAML format:
+
+    semantic_labels:
+      drivable:
+        paths: [...]
+        keywords: [...]
+
+      obstacle:
+        paths: [...]
+        keywords: [...]
 
     Final mask:
         0 = background / unlabeled
@@ -108,67 +131,188 @@ def apply_semantic_labels(config: dict) -> None:
 
     stage = get_current_stage()
 
-    drivable_paths = (
+    semantic_config = (
         config
         .get("environment", {})
         .get("semantic_labels", {})
-        .get("drivable", [])
     )
 
-    if not drivable_paths:
+    if not semantic_config:
         raise RuntimeError(
-            "No drivable Prim paths configured in YAML"
+            "environment.semantic_labels is missing"
         )
 
-    total_labeled = 0
+    def read_rule(rule_name: str) -> tuple[list[str], list[str]]:
+        rule = semantic_config.get(rule_name, {})
 
-    for root_path in drivable_paths:
-        root_prim = stage.GetPrimAtPath(root_path)
-
-        if not root_prim.IsValid():
-            raise RuntimeError(
-                f"Drivable Prim does not exist: {root_path}"
+        if not isinstance(rule, dict):
+            raise TypeError(
+                f"semantic_labels.{rule_name} "
+                "must contain paths and keywords"
             )
 
-        labeled_paths = []
+        paths = rule.get("paths", [])
+        keywords = rule.get("keywords", [])
 
-        for prim in Usd.PrimRange(root_prim):
-            if not prim.IsA(UsdGeom.Mesh):
+        if not isinstance(paths, list):
+            raise TypeError(
+                f"semantic_labels.{rule_name}.paths "
+                "must be a list"
+            )
+
+        if not isinstance(keywords, list):
+            raise TypeError(
+                f"semantic_labels.{rule_name}.keywords "
+                "must be a list"
+            )
+
+        normalized_keywords = [
+            str(keyword).strip().lower()
+            for keyword in keywords
+            if str(keyword).strip()
+        ]
+
+        return paths, normalized_keywords
+
+    def collect_meshes(
+        paths: list[str],
+        keywords: list[str],
+    ) -> dict[str, object]:
+        """
+        Return unique Mesh prims selected by exact paths
+        or by keywords contained in their name/path.
+        """
+
+        selected_meshes = {}
+
+        # -------------------------------------------------
+        # Exact Prim paths
+        # -------------------------------------------------
+
+        for prim_path in paths:
+            root_prim = stage.GetPrimAtPath(prim_path)
+
+            if not root_prim.IsValid():
+                print(
+                    f"[SDG][Warning] Prim not found: "
+                    f"{prim_path}"
+                )
                 continue
 
+            # Exact path points directly to a Mesh.
+            if root_prim.IsA(UsdGeom.Mesh):
+                selected_meshes[
+                    str(root_prim.GetPath())
+                ] = root_prim
+
+                continue
+
+            # Exact path points to an Xform/group.
+            # Label Mesh descendants only.
+            for prim in Usd.PrimRange(root_prim):
+                if not prim.IsA(UsdGeom.Mesh):
+                    continue
+
+                selected_meshes[
+                    str(prim.GetPath())
+                ] = prim
+
+        # -------------------------------------------------
+        # Keyword matching
+        # -------------------------------------------------
+
+        if keywords:
+            for prim in stage.Traverse():
+                if not prim.IsA(UsdGeom.Mesh):
+                    continue
+
+                searchable_text = (
+                    f"{prim.GetName()} {prim.GetPath()}"
+                    .lower()
+                )
+
+                if any(
+                    keyword in searchable_text
+                    for keyword in keywords
+                ):
+                    selected_meshes[
+                        str(prim.GetPath())
+                    ] = prim
+
+        return selected_meshes
+
+    def apply_rule(
+        rule_name: str,
+        semantic_label: str,
+    ) -> set[str]:
+        paths, keywords = read_rule(rule_name)
+
+        meshes = collect_meshes(
+            paths=paths,
+            keywords=keywords,
+        )
+
+        for prim in meshes.values():
             add_update_semantics(
                 prim=prim,
-                semantic_label="drivable",
+                semantic_label=semantic_label,
                 type_label="class",
             )
 
-            labeled_paths.append(
-                str(prim.GetPath())
-            )
-
-        if not labeled_paths:
-            raise RuntimeError(
-                f"No Mesh Prim found under: {root_path}"
-            )
-
         print(
-            f"[SDG] Drivable meshes under {root_path}:"
+            f"[SDG] Applied '{semantic_label}' "
+            f"to {len(meshes)} meshes"
         )
 
-        for path in labeled_paths:
+        for path in list(meshes.keys())[:20]:
             print(f"  - {path}")
 
-        total_labeled += len(labeled_paths)
+        if len(meshes) > 20:
+            print(
+                f"  ... and {len(meshes) - 20} more"
+            )
 
-    # Allow Stage/renderer semantic changes to update.
+        return set(meshes.keys())
+
+    # Drivable first.
+    drivable_meshes = apply_rule(
+        rule_name="drivable",
+        semantic_label="drivable",
+    )
+
+    # Obstacle second so it wins if one Mesh matches
+    # both drivable and obstacle keywords.
+    obstacle_meshes = apply_rule(
+        rule_name="obstacle",
+        semantic_label="obstacle",
+    )
+
+    overlapping_meshes = (
+        drivable_meshes & obstacle_meshes
+    )
+
+    if overlapping_meshes:
+        print(
+            "[SDG][Warning] Meshes matched both rules. "
+            "They were finalized as obstacle:"
+        )
+
+        for path in sorted(overlapping_meshes):
+            print(f"  - {path}")
+
+    if not drivable_meshes:
+        raise RuntimeError(
+            "No drivable meshes matched the YAML rules"
+        )
+
     for _ in range(3):
         simulation_app.update()
 
     print(
-        f"[SDG] Total drivable meshes labeled: "
-        f"{total_labeled}"
+        "[SDG] Environment semantic labeling complete: "
+        f"drivable={len(drivable_meshes)}, "
+        f"obstacle={len(obstacle_meshes)}"
     )
-
 
 def create_camera(camera_config: dict):
     """Create one RC-car-like camera."""
@@ -477,7 +621,7 @@ def main() -> None:
         config["environment"]["url"]
     )
 
-    print_mesh_prim_paths()
+    print_floor_mesh_candidates()
 
     # 2. Existing environment semantics
     apply_semantic_labels(config)

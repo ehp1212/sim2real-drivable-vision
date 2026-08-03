@@ -1,0 +1,205 @@
+launch:
+  headless: true
+  renderer: RayTracedLighting
+generation:
+  num_frames: 100
+  seed: 42
+  output_dir: sdg/outputs/warehouse/run_001
+  rt_subframes: 8
+environment:
+  url: /Isaac/Environments/Simple_Warehouse/full_warehouse.usd
+
+  semantic_labels:
+    drivable:
+      paths:
+        - /World/Warehouse/Architecture/Floor
+        - /World/Warehouse/Architecture/Floor_01
+
+      keywords:
+        - floor
+        - warehouse_floor
+        - concrete_floor
+        - ground
+        - aisle_floor
+        - walkway_floor
+        - loading_floor
+
+    obstacle:
+      paths: []
+
+      keywords:
+        # 보관 구조
+        - rack
+        - shelving
+        - shelf
+        - cabinet
+        - locker
+
+        # 적재물
+        - pallet
+        - palette
+        - crate
+        - box
+        - cardboard
+        - package
+        - parcel
+        - container
+
+        # 원통형 적재물
+        - barrel
+        - drum
+        - cylinder
+
+        # 운반 장비
+        - forklift
+        - pallet_jack
+        - palletjack
+        - trolley
+        - cart
+
+        # 작업장 설비
+        - machine
+        - machinery
+        - equipment
+        - workbench
+        - table
+        - conveyor
+
+        # 구조물 및 통행 방해물
+        - column
+        - pillar
+        - barrier
+        - bollard
+        - cone
+        - railing
+        - fence
+
+        # 기타 바닥 물체
+        - bin
+        - trash
+        - bag
+        - cable
+        - hose
+camera:
+  resolution:
+  - 640
+  - 384
+  focal_length: 24.0
+  clipping_range:
+  - 0.05
+  - 100.0
+  position:
+    min:
+    - -2.0
+    - -2.0
+    - 0.15
+    max:
+    - 2.0
+    - 2.0
+    - 0.3
+  look_at:
+    min:
+    - -1.0
+    - 1.0
+    - 0.0
+    max:
+    - 1.0
+    - 4.0
+    - 0.2
+randomization:
+  lighting:
+    enabled: false
+    count: 3
+    position:
+      min:
+      - -3.0
+      - -3.0
+      - 2.0
+      max:
+      - 3.0
+      - 3.0
+      - 4.0
+    intensity:
+      min: 1500
+      max: 5000
+    color:
+      min:
+      - 0.7
+      - 0.7
+      - 0.7
+      max:
+      - 1.0
+      - 1.0
+      - 1.0
+    temperature:
+      mean: 5000
+      std: 800
+    scale:
+      min: 0.5
+      max: 1.5
+  obstacles:
+    enabled: true
+    assets:
+    - name: traffic_cone
+      url: /Isaac/Environments/Simple_Warehouse/Props/S_TrafficCone.usd
+      count: 2
+
+    - name: wet_floor_sign
+      url: /Isaac/Environments/Simple_Warehouse/Props/S_WetFloorSign.usd
+      count: 1
+
+    - name: plastic_barrel
+      url: /Isaac/Environments/Simple_Warehouse/Props/SM_BarelPlastic_B_03.usd
+      count: 1
+
+    - name: cardboard_box_a
+      url: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxA_01_414.usd
+      count: 1
+
+    - name: cardboard_box_d
+      url: /Isaac/Environments/Simple_Warehouse/Props/SM_CardBoxD_04_1847.usd
+      count: 1
+
+    - name: briefcase
+      url: /Isaac/Environments/Office/Props/SM_Briefcase.usd
+      count: 1
+
+    position:
+      min:
+      - -5.0
+      - 5.0
+      - 0.0
+      max:
+      - 5.0
+      - 5.0
+      - 0.0
+    rotation:
+      min:
+      - 0.0
+      - 0.0
+      - -180.0
+      max:
+      - 0.0
+      - 0.0
+      - 180.0
+    scale:
+      min:
+      - 0.7
+      - 0.7
+      - 0.7
+      max:
+      - 1.3
+      - 1.3
+      - 1.3
+    color:
+      min:
+      - 0.1
+      - 0.1
+      - 0.1
+      max:
+      - 0.9
+      - 0.9
+      - 0.9
+writer:
+  rgb: true
+  semantic_segmentation: true
