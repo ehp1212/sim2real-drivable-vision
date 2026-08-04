@@ -1,0 +1,222 @@
+launch:
+  headless: true
+  renderer: RayTracedLighting
+generation:
+  num_frames: 500
+  seed: 242
+  output_dir: sdg/outputs/real_room/run_001
+  rt_subframes: 8
+environment:
+  url: "/home/eun/personal_project/jetson_model/isaac/room.usd"
+  semantic_labels:
+    drivable:
+      paths:
+        - "/World/basic/floor"
+      keywords:
+        # 일반 바닥
+        - floor
+        - flooring
+        - ground
+
+        # 실내 바닥 재질
+        - carpet
+        - rug
+        - floor_tile
+        - tile_floor
+        - vinyl_floor
+        - wood_floor
+        - parquet
+
+        # 통로 바닥
+        - walkway_floor
+        - corridor_floor
+        - hallway_floor
+        - lobby_floor
+    obstacle:
+      paths: []
+      keywords:
+        # 책상과 테이블
+        - table
+        - desk
+        - counter
+        - reception
+
+        # 의자와 소파
+        - chair
+        - stool
+        - bench
+        - sofa
+        - couch
+
+        # 수납 가구
+        - cabinet
+        - cupboard
+        - wardrobe
+        - drawer
+        - shelf
+        - shelving
+        - bookcase
+        - locker
+
+        # 사무기기
+        - monitor
+        - computer
+        - laptop
+        - printer
+        - copier
+        - scanner
+        - projector
+        - television
+        - tv
+
+        # 실내 물품
+        - plant
+        - planter
+        - trash
+        - wastebasket
+        - bin
+        - box
+        - crate
+        - bag
+        - backpack
+        - suitcase
+        - luggage
+
+        # 이동 장비
+        - cart
+        - trolley
+        - pallet
+
+        # 설비와 기타 장애물
+        - radiator
+        - heater
+        - floor_lamp
+        - standing_lamp
+        - fan
+        - vending
+        - extinguisher
+        - barrier
+        - cone
+
+        # RC카에 위험한 구조
+        - stair
+        - stairs
+        - step
+        - railing
+        - handrail
+camera:
+  resolution:
+  - 640
+  - 384
+  focal_length: 24.0
+  clipping_range:
+  - 0.05
+  - 100.0
+  position:
+    min:
+    - -1.0
+    - -1.0
+    - 0.18
+    max:
+    - 1.0
+    - .0
+    - 0.35
+  look_at:
+    min:
+    - -1.0
+    - -1.0
+    - 0.0
+    max:
+    - 1.0
+    - 1.0
+    - 0.25
+randomization:
+  lighting:
+    enabled: false
+    count: 3
+    position:
+      min:
+      - -3.0
+      - -3.0
+      - 2.0
+      max:
+      - 3.0
+      - 3.0
+      - 4.0
+    intensity:
+      min: 1500
+      max: 5000
+    color:
+      min:
+      - 0.7
+      - 0.7
+      - 0.7
+      max:
+      - 1.0
+      - 1.0
+      - 1.0
+    temperature:
+      mean: 5000
+      std: 800
+    scale:
+      min: 0.5
+      max: 1.5
+  obstacles:
+    obstacles: null
+    enabled: true
+    assets:
+    - name: wet_floor_sign
+      url: /Isaac/Environments/Simple_Warehouse/Props/S_WetFloorSign.usd
+      count: 2
+
+    - name: briefcase
+      url: /Isaac/Environments/Office/Props/SM_Briefcase.usd
+      count: 2
+
+    - name: closed_book_a
+      url: /Isaac/Environments/Office/Props/SM_Book_03.usd
+      count: 2
+
+    - name: open_book
+      url: /Isaac/Environments/Office/Props/SM_BookOpen_01.usd
+      count: 1
+
+    position:
+      min:
+      - -2.0
+      - -2.0
+      - 0.0
+      max:
+      - 2.0
+      - 2.0
+      - 0.0
+    rotation:
+      min:
+      - 0.0
+      - 0.0
+      - -180.0
+      max:
+      - 0.0
+      - 0.0
+      - 180.0
+    scale:
+      min:
+      - 0.7
+      - 0.7
+      - 0.7
+      max:
+      - 1.0
+      - 1.0
+      - 1.0
+    color:
+      min:
+      - 0.1
+      - 0.1
+      - 0.1
+      max:
+      - 0.9
+      - 0.9
+      - 0.9
+writer:
+  rgb: true
+  semantic_segmentation: true

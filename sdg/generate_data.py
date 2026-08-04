@@ -66,6 +66,8 @@ from isaacsim.core.utils.semantics import add_update_semantics
 from isaacsim.storage.native import get_assets_root_path
 from semantic_mask_writer import SemanticMaskWriter
 
+from pathlib import Path
+
 def load_environment(environment_url: str) -> None:
     """Load one Isaac Sim environment USD as the current Stage."""
 
@@ -74,16 +76,73 @@ def load_environment(environment_url: str) -> None:
     if assets_root is None:
         raise RuntimeError("Isaac Sim asset root could not be found")
 
-    full_url = assets_root + environment_url
+    full_url = resolve_environment_url(
+        environment_url,
+        assets_root,
+    )
 
     print(f"[SDG] Loading environment: {full_url}")
 
-    if not open_stage(full_url):
-        raise RuntimeError(f"Failed to load environment: {full_url}")
+    # open_stage()는 성공하면 True를 반환
+    success = open_stage(full_url)
 
-    # Stage 로딩이 끝나도록 몇 프레임 업데이트
+    if not success:
+        raise RuntimeError(
+            f"Failed to load environment: {full_url}"
+        )
+
+    # Stage 로딩 완료를 위해 몇 프레임 진행
     for _ in range(10):
         simulation_app.update()
+
+    stage = get_current_stage()
+
+    if stage is None:
+        raise RuntimeError(
+            f"Stage was not available after loading: {full_url}"
+        )
+
+    print(f"[SDG] Environment loaded: {full_url}")
+
+def resolve_environment_url(
+    environment_url: str,
+    assets_root: str,
+) -> str:
+    """Resolve remote Isaac paths and local filesystem paths."""
+
+    # 이미 완성된 URL
+    if environment_url.startswith(
+        ("http://", "https://", "omniverse://", "file://")
+    ):
+        return environment_url
+
+    # Isaac Sim 기본 asset 경로
+    # 예: /Isaac/Environments/Office/office.usd
+    if environment_url.startswith("/Isaac/"):
+        return (
+            assets_root.rstrip("/")
+            + environment_url
+        )
+
+    local_path = Path(environment_url).expanduser()
+
+    # 로컬 절대경로
+    # 예: /home/eun/.../room.usd
+    if local_path.is_absolute():
+        if not local_path.is_file():
+            raise FileNotFoundError(
+                f"Local environment USD does not exist: {local_path}"
+            )
+
+        return str(local_path.resolve())
+
+    # 로컬 상대경로가 실제로 존재하는 경우
+    if local_path.is_file():
+        return str(local_path.resolve())
+
+    raise FileNotFoundError(
+        f"Environment USD could not be resolved: {environment_url}"
+    )
 
 def print_floor_mesh_candidates() -> None:
     stage = get_current_stage()

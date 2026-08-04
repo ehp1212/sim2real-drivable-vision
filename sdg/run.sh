@@ -11,6 +11,7 @@ CONFIGS=(
     "sdg/configs/warehouse.yaml"
     "sdg/configs/hospital.yaml"
     "sdg/configs/office.yaml"
+    "sdg/configs/real_room.yaml"
 )
 
 for config in "${CONFIGS[@]}"; do

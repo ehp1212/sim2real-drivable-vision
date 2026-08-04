@@ -10,6 +10,7 @@ DATA_SOURCES = {
     "office": PROJECT_ROOT / "sdg/outputs/office/run_001",
     "hospital": PROJECT_ROOT / "sdg/outputs/hospital/run_001",
     "warehouse": PROJECT_ROOT / "sdg/outputs/warehouse/run_001",
+    "real_room": PROJECT_ROOT / "sdg/outputs/real_room/run_001",
 }
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}

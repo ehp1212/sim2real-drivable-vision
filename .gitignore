@@ -105,3 +105,24 @@ dataset/drivable/masks/*/*
 # Keep empty dataset structure
 !dataset/drivable/images/*/.gitkeep
 !dataset/drivable/masks/*/.gitkeep
+
+# Ultralytics cache
+dataset/drivable/masks/*.cache
+
+# Private/raw real-world data
+dataset/generalization/
+
+# Isaac Sim generated thumbnails
+isaac/.thumbs/
+
+# Generated evaluation outputs
+training/evaluations/
+
+# Automatically downloaded model
+yolo26n.pt
+
+# Trained binary weights
+model/finetuned/
+
+training/runs/
+runs/
