@@ -165,13 +165,13 @@ Compared with Version 1, Version 2 produced smoother and more stable predictions
 
 ### Version 2 validation labels
 
-![Version 2 validation labels](training/runs/full_v2/val_batch0_labels.jpg)
+![Version 2 validation labels](.resource/val_batch0_labels.jpg)
 
 ### Real-world inference examples
 
-![Real-world inference example 1](training/evaluations/real_v2/IMG_5074.jpg)
+![Real-world inference example 1](.resource/real_v2_IMG_5074.jpg)
 
-![Real-world inference example 2](training/evaluations/real_v2/IMG_5078.jpg)
+![Real-world inference example 2](.resource/real_v2_IMG_5078.jpg)
 
 > The image paths above are relative to the repository root. These files must be tracked by Git, or copied into a dedicated `docs/images/` directory, for GitHub to render them.
 
@@ -351,16 +351,45 @@ Completed:
 - synthetic test evaluation
 - real-room-inspired USD stage
 - qualitative real-world comparison between model versions
-
-Next steps:
-
 - annotate a small real-image dataset
 - fine-tune with mixed synthetic and real data
 - evaluate quantitative real-world mIoU
 - export to ONNX and TensorRT
 - benchmark on Jetson
+
+Next steps:
+
 - connect segmentation output to the controller
 - add temporal smoothing for video inference
+
+---
+
+## Edge Deployment Benchmark
+
+The trained model was exported to ONNX and converted into an FP16 TensorRT
+engine directly on a Jetson Tegra X1.
+
+| Configuration | Result |
+|---|---:|
+| Input resolution | 384 × 384 |
+| Precision | FP16 |
+| Batch size | 1 |
+| TensorRT version | 8.0.1 |
+| Throughput | 67.24 FPS |
+| Mean TensorRT latency | 14.86 ms |
+| P99 latency | 14.98 ms |
+| Runtime RAM usage | approximately 1.64 / 3.96 GB |
+| Swap usage | 0 MB |
+
+The result exceeds the initial 30 FPS real-time target. The next step is to
+measure the complete camera-to-controller pipeline, including image capture,
+preprocessing, TensorRT inference, semantic-mask postprocessing and ROS 2
+message transfer.
+
+A 640 × 640 engine initially exceeded the available build memory on the
+4 GB device, so the deployment resolution was reduced to 384 × 384. This
+provided a practical balance between model resolution, memory constraints
+and real-time performance.
 
 ---
 
